@@ -1,10 +1,51 @@
-<html>
- <head>
-  <title>
-   First WebPage
-  </title>
- </head>
- <body>
-   Hello World!
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Habit Garden 🌱</title>
+  <style>
+    body { font-family: sans-serif; background: #e6f4ea; padding: 2rem; }
+    h1 { text-align: center; }
+    form { display: flex; gap: 0.5rem; margin: 1rem auto; max-width: 500px; }
+    input, button { padding: 0.5rem; font-size: 1rem; }
+    button { background: #4caf50; color: white; border: none; cursor: pointer; }
+    .habit { background: white; margin: 1rem auto; padding: 1rem; border-radius: 8px; max-width: 500px; display: flex; justify-content: space-between; align-items: center; }
+    .plant { font-size: 1.5rem; }
+  </style>
+</head>
+<body>
+  <h1>🌿 Habit Garden</h1>
+  <form id="form">
+    <input id="habit" placeholder="New habit..." required />
+    <button>Add</button>
+  </form>
+  <div id="list"></div>
+
+  <script>
+    const form = document.getElementById('form'), input = document.getElementById('habit'), list = document.getElementById('list');
+    let habits = JSON.parse(localStorage.getItem('habits')) || [];
+    const emoji = s => s >= 7 ? '🌻' : s >= 3 ? '🌿' : '🌱';
+    const save = () => localStorage.setItem('habits', JSON.stringify(habits));
+    const render = () => {
+      list.innerHTML = '';
+      habits.forEach((h, i) => {
+        const el = document.createElement('div');
+        el.className = 'habit';
+        el.innerHTML = `<div><strong>${h.name}</strong><br/>Streak: ${h.streak}</div>
+                        <div class="plant">${emoji(h.streak)}</div>
+                        <button onclick="mark(${i})">✅</button>`;
+        list.appendChild(el);
+      });
+    };
+    form.onsubmit = e => {
+      e.preventDefault();
+      habits.push({ name: input.value, streak: 0 });
+      input.value = '';
+      save(); render();
+    };
+    window.mark = i => { habits[i].streak++; save(); render(); };
+    render();
+  </script>
+</body>
 </html>
